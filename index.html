@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT Woordenlijst Nederlands-Frans</title>
+    <style>
+        .ict-vocabulaire {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .ict-intro {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #800000;
+        }
+        
+        .ict-intro h2 {
+            color: #800000;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+        
+        .ict-intro p {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .search-box {
+            margin-bottom: 25px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #800000;
+        }
+        
+        .category-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background: #fff;
+            border: 2px solid #800000;
+            color: #800000;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .category-btn:hover {
+            background: #800000;
+            color: white;
+        }
+        
+        .category-btn.active {
+            background: #800000;
+            color: white;
+        }
+        
+        .results-info {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .vocab-table thead {
+            background: #800000;
+            color: white;
+        }
+        
+        .vocab-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .vocab-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .vocab-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .vocab-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .category-filters {
+                justify-content: center;
+            }
+            
+            .category-btn {
+                font-size: 13px;
+                padding: 8px 15px;
+            }
+            
+            .vocab-table {
+                font-size: 14px;
+            }
+            
+            .vocab-table th,
+            .vocab-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ict-vocabulaire">
+        <div class="ict-intro">
+            <h2>ICT Vocabulaire Nederlands-Frans</h2>
+            <p>Frankrijk is trots op zijn taal en zijn pioniersrol op het gebied van ICT, automatisering en internet. Toen in 1982 Minitel werd gelanceerd was het internet zoals we dat nu kennen nog onbekend. De Fransen vinden eigenlijk dat zij de uitvinders zijn van het internet en veel technologie die daarmee samenhangt.</p>
+            <p>Dit verklaart de hang naar een eigen Franse vocabulaire in de ICT. Hieronder vind je een overzichtelijke woordenlijst met Franse ICT-termen.</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Zoek een term in het Nederlands of Frans...">
+        </div>
+        
+        <div class="category-filters">
+            <button class="category-btn active" data-category="all">Alle termen</button>
+            <button class="category-btn" data-category="hardware">Hardware</button>
+            <button class="category-btn" data-category="software">Software & Bestanden</button>
+            <button class="category-btn" data-category="internet">Internet & Web</button>
+            <button class="category-btn" data-category="telefonie">Telefonie & Mobiel</button>
+            <button class="category-btn" data-category="acties">Acties & Bewerkingen</button>
+        </div>
+        
+        <div class="results-info">
+            <span id="resultsCount">Alle termen worden getoond</span>
+        </div>
+        
+        <table class="vocab-table">
+            <thead>
+                <tr>
+                    <th style="width: 45%">Nederlands</th>
+                    <th style="width: 55%">Français</th>
+                </tr>
+            </thead>
+            <tbody id="vocabTableBody">
+                <!-- Data wordt hier via JavaScript ingevoegd -->
+            </tbody>
+        </table>
+        
+        <div id="noResults" class="no-results hidden">
+            Geen resultaten gevonden voor deze zoekopdracht.
+        </div>
+    </div>
+
+    <script>
+        // Volledige woordenlijst met categorieën
+        const vocabData = [
+            { nl: "@", fr: "arobas(e)", cat: "internet" },
+            { nl: "aan", fr: "activé", cat: "acties" },
+            { nl: "aangeven", fr: "indiquer", cat: "acties" },
+            { nl: "aankruisvakje", fr: "case à cocher", cat: "software" },
+            { nl: "aankruisen", fr: "cocher", cat: "acties" },
+            { nl: "aanmaken", fr: "créer", cat: "acties" },
+            { nl: "aanpassen (zich) automatisch", fr: "régler (se) automatiquement", cat: "acties" },
+            { nl: "aanslaan", fr: "taper sur", cat: "acties" },
+            { nl: "aansluiten", fr: "brancher/connecter", cat: "hardware" },
+            { nl: "aansluiten", fr: "allumer", cat: "acties" },
+            { nl: "aanzetten", fr: "activer", cat: "acties" },
+            { nl: "account", fr: "compte", cat: "internet" },
+            { nl: "achtergrond", fr: "fond d'écran", cat: "software" },
+            { nl: "achtergrondkleur", fr: "couleur de l'arrière-plan", cat: "software" },
+            { nl: "actief gesprek", fr: "un appel actif", cat: "telefonie" },
+            { nl: "actief venster", fr: "fenêtre active/activée", cat: "software" },
+            { nl: "actief zijn (programma)", fr: "être en cours d'exécution", cat: "software" },
+            { nl: "adapter", fr: "adaptateur", cat: "hardware" },
+            { nl: "add-on", fr: "extension", cat: "software" },
+            { nl: "afbeelding", fr: "image", cat: "software" },
+            { nl: "afdalend sorteren", fr: "trier par ordre décroissant", cat: "acties" },
+            { nl: "afdruk", fr: "impression", cat: "hardware" },
+            { nl: "afdrukwachtrij", fr: "file d'attente, liste de fichiers", cat: "hardware" },
+            { nl: "afdrukwachtrij", fr: "en attente d'impression", cat: "hardware" },
+            { nl: "afsluiten", fr: "quitter/arrêter", cat: "acties" },
+            { nl: "als-dan-bewerking", fr: "fonction-si-alors", cat: "software" },
+            { nl: "antwoordtijd", fr: "temps de réponse", cat: "software" },
+            { nl: "applicatie", fr: "application", cat: "software" },
+            { nl: "archief", fr: "archives", cat: "software" },
+            { nl: "attachment", fr: "pièce jointe", cat: "internet" },
+            { nl: "audio", fr: "sonore", cat: "hardware" },
+            { nl: "automatisch", fr: "automatique", cat: "acties" },
+            { nl: "backspace", fr: "retour chariot", cat: "hardware" },
+            { nl: "back-up", fr: "sauvegarde", cat: "software" },
+            { nl: "backup maken", fr: "sauvegarder", cat: "acties" },
+            { nl: "balk", fr: "barre", cat: "software" },
+            { nl: "beltoonvolume", fr: "volume sonnerie", cat: "telefonie" },
+            { nl: "bericht opstellen", fr: "rédiger un message", cat: "telefonie" },
+            { nl: "berichtinstellingen", fr: "paramètres messages/propriétés du message", cat: "telefonie" },
+            { nl: "beschrijfbaar", fr: "saisissable", cat: "software" },
+            { nl: "besturingssysteem", fr: "système d'exploitation", cat: "software" },
+            { nl: "beveiligingscode", fr: "code de sécurité", cat: "software" },
+            { nl: "bevestigen", fr: "valider", cat: "acties" },
+            { nl: "bevoegd", fr: "autorisé", cat: "software" },
+            { nl: "bewaren", fr: "sauvegarder", cat: "acties" },
+            { nl: "bewerking", fr: "opération", cat: "acties" },
+            { nl: "bladeren (door een programma)", fr: "faire défiler", cat: "acties" },
+            { nl: "blokkeren", fr: "bloquer", cat: "acties" },
+            { nl: "bookmark", fr: "signet", cat: "internet" },
+            { nl: "browser", fr: "navigateur web/logiciel de navigation", cat: "internet" },
+            { nl: "cd-rom", fr: "cd-rom/Cédérom", cat: "hardware" },
+            { nl: "chip", fr: "puce", cat: "hardware" },
+            { nl: "computer", fr: "ordinateur", cat: "hardware" },
+            { nl: "computernetwerk", fr: "réseau", cat: "hardware" },
+            { nl: "concept", fr: "brouillon", cat: "software" },
+            { nl: "contact opnemen", fr: "entrer en contact avec", cat: "telefonie" },
+            { nl: "cookie", fr: "témoin (de connexion)", cat: "internet" },
+            { nl: "cursor", fr: "curseur", cat: "software" },
+            { nl: "database", fr: "base de données", cat: "software" },
+            { nl: "deleten/weggooien/wissen", fr: "effacer", cat: "acties" },
+            { nl: "directory (sub)", fr: "répertoire (sous)", cat: "software" },
+            { nl: "diskette", fr: "disquette", cat: "hardware" },
+            { nl: "dit type computer", fr: "ce type d'ordinateur", cat: "hardware" },
+            { nl: "doorsturen", fr: "transférer", cat: "acties" },
+            { nl: "downloadcenter", fr: "centre de téléchargement", cat: "internet" },
+            { nl: "downloaden", fr: "télécharger", cat: "internet" },
+            { nl: "draadloos", fr: "sans fil", cat: "hardware" },
+            { nl: "draadloze gegevensverbinding", fr: "connexion de données sans fil", cat: "hardware" },
+            { nl: "draaien onder (Windows)", fr: "tourner/fonctionner sous", cat: "software" },
+            { nl: "drag and drop", fr: "glisser-déposer", cat: "acties" },
+            { nl: "drukken op de entertoets", fr: "valider", cat: "acties" },
+            { nl: "drukken op opties", fr: "appuyer sur options", cat: "acties" },
+            { nl: "DTP", fr: "PAO Publication Assistée par Ordinateur", cat: "software" },
+            { nl: "dubbelklikken", fr: "double-cliquer/cliquer deux fois", cat: "acties" },
+            { nl: "DVD", fr: "DVD", cat: "hardware" },
+            { nl: "editen/bewerken", fr: "éditer", cat: "acties" },
+            { nl: "e-mail", fr: "e-mail/courriel/mèl", cat: "internet" },
+            { nl: "FAQ", fr: "FAQ", cat: "internet" },
+            { nl: "FAQ", fr: "foire aux questions FAQ", cat: "internet" },
+            { nl: "favorieten", fr: "favoris", cat: "internet" },
+            { nl: "file/bestand", fr: "fichier", cat: "software" },
+            { nl: "firewall", fr: "pare-feu", cat: "software" },
+            { nl: "foutmelding", fr: "message d'erreur", cat: "software" },
+            { nl: "gateway", fr: "passerelle", cat: "hardware" },
+            { nl: "geavanceerd", fr: "avancé", cat: "software" },
+            { nl: "gebruiken", fr: "utiliser", cat: "acties" },
+            { nl: "gebruiksgemak", fr: "souplesse d'utilisation", cat: "software" },
+            { nl: "gebruiksvriendelijk", fr: "convivial", cat: "software" },
+            { nl: "synchroniseren", fr: "synchroniser", cat: "acties" },
+            { nl: "gegevens uitwisselen", fr: "échanger des informations", cat: "acties" },
+            { nl: "geheugen uitbreiding", fr: "extension mémoire", cat: "hardware" },
+            { nl: "geheugencapaciteit", fr: "capacité mémoire", cat: "hardware" },
+            { nl: "geheugenkaart", fr: "carte mémoire", cat: "hardware" },
+            { nl: "geheugenstatus", fr: "état de la mémoire", cat: "hardware" },
+            { nl: "geluidsclip", fr: "clip audio", cat: "software" },
+            { nl: "gemiste oproep", fr: "appel en absence", cat: "telefonie" },
+            { nl: "genummerd", fr: "numéroté", cat: "software" },
+            { nl: "gereed zijn voor gebruik", fr: "être prêt à l'emploi", cat: "software" },
+            { nl: "gesprek beëindigen", fr: "terminer l'appel", cat: "telefonie" },
+            { nl: "gesprek in de wacht", fr: "un appel en attente", cat: "telefonie" },
+            { nl: "gesprekken doorschakelen", fr: "renvoyer des appels", cat: "telefonie" },
+            { nl: "grafisch programma", fr: "grapheur", cat: "software" },
+            { nl: "handleiding", fr: "manuel utilisateur", cat: "software" },
+            { nl: "hands free", fr: "mains libres", cat: "telefonie" },
+            { nl: "harde schijf", fr: "disque dur", cat: "hardware" },
+            { nl: "hardware", fr: "matériel", cat: "hardware" },
+            { nl: "hardware reset", fr: "réinitialisations matérielles", cat: "hardware" },
+            { nl: "help(functie)", fr: "menu d'aide", cat: "software" },
+            { nl: "helpdesk", fr: "service d'assistance", cat: "software" },
+            { nl: "home", fr: "accueil", cat: "internet" },
+            { nl: "hoofdstation", fr: "unité centrale", cat: "hardware" },
+            { nl: "hoofdtelefoon/oordopje", fr: "casque/kit oreillette", cat: "hardware" },
+            { nl: "icoon", fr: "icône", cat: "software" },
+            { nl: "in het menu", fr: "dans le menu", cat: "software" },
+            { nl: "In-/output", fr: "entrée/sortie", cat: "hardware" },
+            { nl: "inbox", fr: "messages reçus/boîte de réception", cat: "internet" },
+            { nl: "info bewerken", fr: "manipuler les données", cat: "acties" },
+            { nl: "infonummers (Gouden Gids/gratis nummer)", fr: "les renseignements (les pages jaunes/le numéro vert)", cat: "telefonie" },
+            { nl: "informatica", fr: "informatique", cat: "software" },
+            { nl: "ingebouwd", fr: "intégré", cat: "hardware" },
+            { nl: "inkomend gesprek", fr: "l´arrivée d´un appel", cat: "telefonie" },
+            { nl: "inloggen", fr: "se connecter", cat: "acties" },
+            { nl: "inschakelen", fr: "activer", cat: "acties" },
+            { nl: "installeren", fr: "installer", cat: "acties" },
+            { nl: "instant messaging", fr: "messagerie instantanée", cat: "internet" },
+            { nl: "instellingen", fr: "paramètres", cat: "software" },
+            { nl: "internationale toegangscode", fr: "indicatif téléphonique international", cat: "telefonie" },
+            { nl: "interval", fr: "temps d'affichage", cat: "software" },
+            { nl: "intoetsen", fr: "saisir", cat: "acties" },
+            { nl: "invoegen (plaatje, tekst)", fr: "insérer", cat: "acties" },
+            { nl: "invoer", fr: "saisie", cat: "acties" },
+            { nl: "invoeren", fr: "saisir", cat: "acties" },
+            { nl: "invoeren (het)", fr: "les opérations de saisie", cat: "acties" },
+            { nl: "keuzemenu", fr: "menu déroulant", cat: "software" },
+            { nl: "kiezen", fr: "choisir", cat: "acties" },
+            { nl: "klantenservice", fr: "service support/service clientèle", cat: "software" },
+            { nl: "kleurenschema", fr: "schéma en couleurs", cat: "software" },
+            { nl: "klikken op", fr: "cliquer sur", cat: "acties" },
+            { nl: "knipperen", fr: "clignoter", cat: "software" },
+            { nl: "krachtig", fr: "puissant", cat: "hardware" },
+            { nl: "laatst gekozen nummer", fr: "le dernier numéro composé", cat: "telefonie" },
+            { nl: "laatste oproep", fr: "le dernier appel", cat: "telefonie" },
+            { nl: "laatste versie", fr: "dernière version", cat: "software" },
+            { nl: "laden", fr: "charger", cat: "acties" },
+            { nl: "laptop", fr: "(ordinateur) portable", cat: "hardware" },
+            { nl: "laten zien (op scherm)", fr: "afficher", cat: "acties" },
+            { nl: "LCD scherm", fr: "écran à cristaux liquides", cat: "hardware" },
+            { nl: "leeg scherm", fr: "écran vide", cat: "hardware" },
+            { nl: "lettergrootte", fr: "taille de caractère", cat: "software" },
+            { nl: "lijst openen", fr: "accéder à la liste", cat: "acties" },
+            { nl: "login", fr: "login", cat: "internet" },
+            { nl: "luidspreker", fr: "le haut-parleur", cat: "hardware" },
+            { nl: "luisteren naar voicemail", fr: "écouter les messages vocaux", cat: "telefonie" },
+            { nl: "luistergedeelte", fr: "écouteur", cat: "hardware" },
+            { nl: "mailbox", fr: "boîte mails/boîte aux lettres électronique", cat: "internet" },
+            { nl: "mainframe", fr: "unité centrale", cat: "hardware" },
+            { nl: "map", fr: "dossier", cat: "software" },
+            { nl: "markeren", fr: "marquer", cat: "acties" },
+            { nl: "meegeleverd", fr: "préinstallé", cat: "software" },
+            { nl: "menuweergave", fr: "affichage du menu", cat: "software" },
+            { nl: "microfoon uitdoen/aanzetten", fr: "couper/activer le micro", cat: "hardware" },
+            { nl: "microprocessor", fr: "microprocesseur", cat: "hardware" },
+            { nl: "modem", fr: "modem", cat: "hardware" },
+            { nl: "mp3 (bestand)", fr: "mp3 (fichier)", cat: "software" },
+            { nl: "multimedia", fr: "multimédia", cat: "software" },
+            { nl: "namen invoeren", fr: "saisir des noms", cat: "acties" },
+            { nl: "navigatietoets", fr: "touche de navigation", cat: "hardware" },
+            { nl: "netwerk", fr: "réseau", cat: "hardware" },
+            { nl: "netwerkoperator", fr: "opérateur réseau", cat: "hardware" },
+            { nl: "niet markeren", fr: "enlever", cat: "acties" },
+            { nl: "niet verzonden", fr: "non transmis", cat: "internet" },
+            { nl: "off line", fr: "hors ligne/déconnecté", cat: "internet" },
+            { nl: "OK (klikken)", fr: "valider", cat: "acties" },
+            { nl: "on line", fr: "en ligne/connecté", cat: "internet" },
+            { nl: "onder/verbreken", fr: "interrompre", cat: "acties" },
+            { nl: "ondersteund worden", fr: "être pris en charge", cat: "software" },
+            { nl: "online help", fr: "aide en ligne", cat: "internet" },
+            { nl: "on-line zijn", fr: "être en ligne", cat: "internet" },
+            { nl: "ontvanger", fr: "le récepteur", cat: "hardware" },
+            { nl: "ontvangst toestaan", fr: "autoriser la réception", cat: "acties" },
+            { nl: "opdracht", fr: "commande", cat: "software" },
+            { nl: "open/sluit het programma/venster", fr: "ouvrez/fermez le programme/la fenêtre", cat: "acties" },
+            { nl: "ophalen (berichten)", fr: "récupérer", cat: "acties" },
+            { nl: "opmaak", fr: "mise en page", cat: "software" },
+            { nl: "oproep beantwoorden", fr: "répondre à un appel", cat: "telefonie" },
+            { nl: "oproep signaal", fr: "signal d'appels", cat: "telefonie" },
+            { nl: "oproep weigeren", fr: "rejeter un appel", cat: "telefonie" },
+            { nl: "opslaan", fr: "sauvegarder/enregistrer/stocker", cat: "acties" },
+            { nl: "opslag", fr: "stockage", cat: "hardware" },
+            { nl: "opstarten", fr: "lancer", cat: "acties" },
+            { nl: "optie", fr: "une option", cat: "software" },
+            { nl: "ordenen", fr: "organiser", cat: "acties" },
+            { nl: "origineel bericht", fr: "texte original", cat: "internet" },
+            { nl: "outbox", fr: "à envoyer/éléments envoyés", cat: "internet" },
+            { nl: "overschrijven", fr: "remplacer", cat: "acties" },
+            { nl: "pagina", fr: "page", cat: "internet" },
+            { nl: "PC", fr: "micro(-ordinateur)/ordinateur individuel, PC", cat: "hardware" },
+            { nl: "PDA", fr: "PDA pocket pc/ordinateur de poche/assistant/personnel/agenda électronique", cat: "hardware" },
+            { nl: "pijltje/aanwijssymbool", fr: "pointeur", cat: "software" },
+            { nl: "plaatje", fr: "image", cat: "software" },
+            { nl: "plug-in", fr: "extension (module d')", cat: "software" },
+            { nl: "positiebepaling", fr: "positionnement en cours", cat: "software" },
+            { nl: "printen", fr: "imprimer", cat: "acties" },
+            { nl: "printer (laser, inkjet)", fr: "imprimante (à laser, à jet d'encre)", cat: "hardware" },
+            { nl: "processor", fr: "processeur", cat: "hardware" },
+            { nl: "profiel", fr: "mode", cat: "software" },
+            { nl: "programmeerhulpmiddel", fr: "outil de programmation", cat: "software" },
+            { nl: "provider", fr: "fournisseur d'accès (à Internet)", cat: "internet" },
+            { nl: "pull technology", fr: "recherche individuelle", cat: "internet" },
+            { nl: "raadplegen (van teksten)", fr: "consulter", cat: "acties" },
+            { nl: "RAM-geheugen", fr: "mémoire vive", cat: "hardware" },
+            { nl: "randapparatuur", fr: "périphériques", cat: "hardware" },
+            { nl: "rechter/linker muisknop", fr: "bouton droit/gauche de la souris", cat: "hardware" },
+            { nl: "resetten", fr: "réinitialiser/redémarrer", cat: "acties" },
+            { nl: "ROM-geheugen", fr: "mémoire morte", cat: "hardware" },
+            { nl: "saven/bewaren", fr: "sauvegarder", cat: "acties" },
+            { nl: "scanner", fr: "scanner", cat: "hardware" },
+            { nl: "scherm", fr: "écran", cat: "hardware" },
+            { nl: "schuifbalk", fr: "ascenseur", cat: "software" },
+            { nl: "schuiven in", fr: "enficher", cat: "acties" },
+            { nl: "screensaver", fr: "l'écran de veille", cat: "software" },
+            { nl: "selecteren/inschakelen", fr: "sélectionner", cat: "acties" },
+            { nl: "selectietoets", fr: "touche écran", cat: "hardware" },
+            { nl: "server", fr: "serveur", cat: "hardware" },
+            { nl: "serviceprovider", fr: "fournisseur de services", cat: "internet" },
+            { nl: "sjablonen", fr: "modèles", cat: "software" },
+            { nl: "smiley/emoticon", fr: "smiley", cat: "internet" },
+            { nl: "sms-bericht", fr: "sms", cat: "telefonie" },
+            { nl: "snelkeuze", fr: "appel abrégé", cat: "telefonie" },
+            { nl: "soft reset", fr: "réinitialisations logicielles", cat: "software" },
+            { nl: "softwarepakket", fr: "progiciel/logiciel intégré", cat: "software" },
+            { nl: "spatie invoegen", fr: "insérer un espace", cat: "acties" },
+            { nl: "speciaal teken", fr: "caractère spécial", cat: "software" },
+            { nl: "spellingschecker", fr: "vérificateur d'orthographe", cat: "software" },
+            { nl: "spreadsheet", fr: "tableur", cat: "software" },
+            { nl: "standaard (tekst)", fr: "standard", cat: "software" },
+            { nl: "submenu", fr: "sous-menu", cat: "software" },
+            { nl: "surfen", fr: "surfer", cat: "internet" },
+            { nl: "synchroniseren", fr: "synchroniser", cat: "acties" },
+            { nl: "table", fr: "tableau", cat: "software" },
+            { nl: "taken/notities", fr: "à faire/notes", cat: "software" },
+            { nl: "teken", fr: "caractère", cat: "software" },
+            { nl: "tekst", fr: "texte", cat: "software" },
+            { nl: "tekstbericht", fr: "message texte", cat: "telefonie" },
+            { nl: "tekstverwerking", fr: "traitement de texte", cat: "software" },
+            { nl: "telefoonnummer kiezen", fr: "composer un numéro de téléphone", cat: "telefonie" },
+            { nl: "teller", fr: "compteur", cat: "software" },
+            { nl: "terminal", fr: "terminal", cat: "hardware" },
+            { nl: "teruggaan naar de pagina", fr: "revenir à la page", cat: "acties" },
+            { nl: "test", fr: "essai/test", cat: "software" },
+            { nl: "time-out", fr: "délai", cat: "software" },
+            { nl: "toegang (ver)krijgen tot", fr: "accéder à", cat: "acties" },
+            { nl: "toegang geven", fr: "donner accès à", cat: "acties" },
+            { nl: "toegangscode", fr: "code d'accès", cat: "software" },
+            { nl: "toegestaan", fr: "autorisé", cat: "software" },
+            { nl: "toets", fr: "touche", cat: "hardware" },
+            { nl: "toets indrukken", fr: "appuyer sur une touche", cat: "acties" },
+            { nl: "toets ingedrukt houden", fr: "maintenir la touche enfoncée", cat: "acties" },
+            { nl: "toetsen blokkering", fr: "verrouillage du clavier", cat: "hardware" },
+            { nl: "toetsenbord", fr: "clavier", cat: "hardware" },
+            { nl: "toon", fr: "tonalité", cat: "telefonie" },
+            { nl: "touchscreen", fr: "écran tactile", cat: "hardware" },
+            { nl: "trackball", fr: "TrackBall", cat: "hardware" },
+            { nl: "trilfunctie", fr: "vibreur", cat: "telefonie" },
+            { nl: "uit/aan toets", fr: "touche arrêt/marche", cat: "hardware" },
+            { nl: "uitloggen/afmelden", fr: "fermer la session", cat: "acties" },
+            { nl: "uitpakken (bestanden)", fr: "extraire", cat: "acties" },
+            { nl: "uitschakelen/uitzetten", fr: "éteindre/arrêter", cat: "acties" },
+            { nl: "uitvoeren (programma)", fr: "exécuter", cat: "acties" },
+            { nl: "up to date houden", fr: "maintenir à jour", cat: "acties" },
+            { nl: "update installeren", fr: "installer une mise à jour", cat: "acties" },
+            { nl: "updaten", fr: "mettre à jour", cat: "acties" },
+            { nl: "upgrade", fr: "mise à jour", cat: "software" },
+            { nl: "USB poort", fr: "port USB (bus universel en série)", cat: "hardware" },
+            { nl: "van uw keuze", fr: "de votre choix", cat: "software" },
+            { nl: "venster", fr: "fenêtre", cat: "software" },
+            { nl: "veranderen", fr: "modifier", cat: "acties" },
+            { nl: "verbinden", fr: "connecter", cat: "acties" },
+            { nl: "verbinding maken", fr: "établir une connexion", cat: "acties" },
+            { nl: "verplaatsen (cursor)", fr: "déplacer le curseur", cat: "acties" },
+            { nl: "verschijnen/weergeven", fr: "apparaître", cat: "acties" },
+            { nl: "verwijderen", fr: "supprimer", cat: "acties" },
+            { nl: "verzendknop", fr: "bouton d'envoi", cat: "telefonie" },
+            { nl: "verzendprofiel", fr: "mode d'envoi", cat: "telefonie" },
+            { nl: "verzonden items", fr: "éléments envoyés", cat: "internet" },
+            { nl: "voicemail", fr: "boîte vocale", cat: "telefonie" },
+            { nl: "volume toets", fr: "touche de volume", cat: "hardware" },
+            { nl: "voorzien zijn van", fr: "être équipé de", cat: "hardware" },
+            { nl: "waarschuwingstoon", fr: "bip d'alerte", cat: "telefonie" },
+            { nl: "wachtwoord", fr: "mot de passe", cat: "software" },
+            { nl: "webpage", fr: "page web", cat: "internet" },
+            { nl: "website", fr: "site web", cat: "internet" },
+            { nl: "weergeven", fr: "afficher", cat: "acties" },
+            { nl: "weggooien", fr: "effacer", cat: "acties" },
+            { nl: "werkstation", fr: "station de travail", cat: "hardware" },
+            { nl: "wissen", fr: "effacer", cat: "acties" },
+            { nl: "zip-bestand", fr: "fichier zip", cat: "software" },
+            { nl: "zoeken", fr: "rechercher", cat: "acties" },
+            { nl: "zoekmachine", fr: "moteur de recherche", cat: "internet" },
+            { nl: "zoekpagina", fr: "page de recherche", cat: "internet" }
+        ];
+
+        let currentCategory = 'all';
+        let currentSearch = '';
+
+        // Initialisatie
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            setupEventListeners();
+        });
+
+        // Event listeners
+        function setupEventListeners() {
+            // Zoekfunctie
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function(e) {
+                currentSearch = e.target.value.toLowerCase();
+                renderTable();
+            });
+
+            // Categorieknoppen
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active state
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update category filter
+                    currentCategory = this.dataset.category;
+                    renderTable();
+                });
+            });
+        }
+
+        // Filter en render tabel
+        function renderTable() {
+            const tbody = document.getElementById('vocabTableBody');
+            const noResults = document.getElementById('noResults');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            // Filter data
+            let filteredData = vocabData.filter(item => {
+                // Category filter
+                const categoryMatch = currentCategory === 'all' || item.cat === currentCategory;
+                
+                // Search filter
+                const searchMatch = currentSearch === '' || 
+                    item.nl.toLowerCase().includes(currentSearch) || 
+                    item.fr.toLowerCase().includes(currentSearch);
+                
+                return categoryMatch && searchMatch;
+            });
+
+            // Update results count
+            const totalCount = filteredData.length;
+            if (currentSearch) {
+                resultsCount.textContent = `${totalCount} resultaten gevonden`;
+            } else if (currentCategory === 'all') {
+                resultsCount.textContent = `Alle ${totalCount} termen worden getoond`;
+            } else {
+                resultsCount.textContent = `${totalCount} termen in deze categorie`;
+            }
+
+            // Render rows
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            tbody.innerHTML = filteredData.map(item => `
+                <tr>
+                    <td>${highlightText(item.nl, currentSearch)}</td>
+                    <td>${highlightText(item.fr, currentSearch)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Highlight zoekterm
+        function highlightText(text, search) {
+            if (!search) return text;
+            
+            const regex = new RegExp(`(${search})`, 'gi');
+            return text.replace(regex, '<strong style="background: #fff3cd;">$1</strong>');
+        }
+    </script>
+</body>
+</html>
